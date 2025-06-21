@@ -1,65 +1,54 @@
 from pyspark import SparkConf, SparkContext
 import sys
 import re
-from collections import defaultdict
 
+# Funzione per normalizzare una riga di testo:
+# converto tutto in minuscolo e rimuovo caratteri non alfabetici (restano solo lettere e spazi)
 def normalize_line(line):
-    # Lowercase and remove punctuation
-    return re.sub(r'[^a-z0-9 ]', ' ', line.lower())
+    return re.sub(r'[^a-z ]', ' ', line.lower())
 
-def tokenize(file_content):
-    filename, lines = file_content
-    results = []
-    for line in lines.split('\n'):
-        line = normalize_line(line)
-        words = line.strip().split()
-        for word in words:
-            if word:
-                results.append(((word, filename), 1))
-    return results
-
-def format_output(word_file_counts):
-    word, occurrences = word_file_counts
-    file_list = [f"{filename}:{count}" for filename, count in occurrences]
-    return (word, "\t".join(file_list))
-
-
-def extract_file_name(file_path):
-    return file_path.split('/')[-1]
-
+# Estraggo solo il nome del file da un path completo
+def extract_filename(path):
+    return path.split('/')[-1]
 
 if __name__ == "__main__":
     if len(sys.argv) != 3:
         print("Usage: spark-submit inverted_index_spark.py <input_dir> <output_dir>")
         sys.exit(-1)
 
+    # Prendo in input la directory dei file e la directory in cui salvare l’inverted index
     input_path = sys.argv[1]
     output_path = sys.argv[2]
 
-    conf = SparkConf().setAppName("Inverted Index")
+    # Creo una configurazione Spark e inizializzo il contesto
+    conf = SparkConf().setAppName("Inverted Index Spark")
     sc = SparkContext(conf=conf)
 
-    # Read all files as (filename, content)
+    # Leggo tutti i file nella directory: ottengo RDD di (file_path, contenuto_testo)
     files = sc.wholeTextFiles(input_path)
 
-    # Map phase: ((word, filename), 1)
-    word_file_pairs = files.flatMap(
-        lambda x: [((word, extract_file_name(x[0])), 1) for word in x[1].lower().split()]
-    )
+    # Estraggo le coppie ((parola, nome_file), 1) per ogni parola normalizzata
+    word_file_pairs = files.flatMap(lambda file: [
+        ((word, extract_filename(file[0])), 1)      # creo la coppia con count 1
+        for line in file[1].split('\n')             # divido il testo in righe
+        for word in normalize_line(line).split()    # normalizzo e divido in parole
+        if word                                     # escludo stringhe vuote
+    ])
 
+    # Sommo tutte le occorrenze della stessa parola nello stesso file
+    word_file_counts = word_file_pairs.reduceByKey(lambda a, b: a + b)
 
+    # Cambio struttura: da ((word, file), count) a (word, "file1:count")
+    # raggruppo tutte le occorrenze per parola, ordino e unisco come stringa, ordino le parole in ordine alfabetico
+    inverted_index = word_file_counts \
+        .map(lambda x: (x[0][0], f"{x[0][1]}:{x[1]}")) \
+        .groupByKey() \
+        .mapValues(lambda files: "\t".join(sorted(files))) \
+        .sortByKey()
 
-    # Combine and reduce by key: ((word, filename), count)
-    word_file_counts = word_file_pairs.reduceByKey(lambda x, y: x + y)
+    # Salvo l’inverted index come file di testo, con formato: parola \t file1:count \t file2:count
+    inverted_index.map(lambda x: f"{x[0]}\t{x[1]}").saveAsTextFile(output_path)
 
-    # Rearrange as (word, (filename, count))
-    word_to_file_count = word_file_counts.map(lambda x: (x[0][0], f"{x[0][1]}: {x[1]}")).groupByKey().mapValues(lambda vals: "\t".join(vals))
-    # Group by word: (word, [(file1, count1), (file2, count2), ...])
-   # grouped = word_to_file_count.groupByKey().mapValues(list)
-
-    # Format final output: (word, "file1:count1\tfile2:count2")
-    result = word_to_file_count.sortByKey()
-
-    # Save result
-    result.saveAsTextFile(output_path)
+    # Termino il contesto Spark
     sc.stop()
+
