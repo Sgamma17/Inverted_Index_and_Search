@@ -10,7 +10,7 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.FileSplit;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
-public class InvertedIndex {
+public class InvertedIndexMoreReducers {
 
     public static class TokenizerMapper extends Mapper<LongWritable, Text, Text, IntWritable> {
         private final static IntWritable one = new IntWritable(1);
@@ -74,13 +74,15 @@ public class InvertedIndex {
         Configuration conf = new Configuration();
         Job job = Job.getInstance(conf, "Inverted Index");
 
-        job.setJarByClass(InvertedIndex.class);
+        job.setJarByClass(InvertedIndexMoreReducers.class);
         job.setMapperClass(TokenizerMapper.class);
         job.setCombinerClass(SumCombiner.class);
         job.setReducerClass(InvertedIndexReducer.class);
 
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(IntWritable.class);
+
+        job.setNumReduceTasks(2);
 
         FileInputFormat.addInputPath(job, new Path(args[0]));
         FileOutputFormat.setOutputPath(job, new Path(args[1]));
