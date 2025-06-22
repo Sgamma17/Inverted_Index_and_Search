@@ -1,0 +1,15 @@
+input_size_mb,execution_time_sec,job_type,avg_ram_mb
+0.01,12,InvertedIndex,1043
+0.1,13,InvertedIndex,1654
+1,14,InvertedIndex,1428
+10,21,InvertedIndex,2106
+100,38,InvertedIndex,2729
+1000,133,InvertedIndex,3847
+2000,249,InvertedIndex,4240
+0.01,10,InvertedIndexMC,1067
+0.1,12,InvertedIndexMC,1226
+1,14,InvertedIndexMC,1484
+10,18,InvertedIndexMC,2014
+100,28,InvertedIndexMC,2331
+1000,74,InvertedIndexMC,3457
+2000,133,InvertedIndexMC,3923
