@@ -82,7 +82,9 @@ public class InvertedIndexMoreReducers {
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(IntWritable.class);
 
-        job.setNumReduceTasks(2);
+        // job.setNumReduceTasks(2);    // Uncomment to set number of reducers
+        job.setNumReduceTasks(4);    // Uncomment to set number of reducers
+        // job.setNumReduceTasks(8);    // Uncomment to set number of reducers
 
         FileInputFormat.addInputPath(job, new Path(args[0]));
         FileOutputFormat.setOutputPath(job, new Path(args[1]));
