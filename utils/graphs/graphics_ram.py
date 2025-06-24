@@ -2,7 +2,9 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # Carica il CSV
-df = pd.read_csv("hadoop_vs_spark.csv")
+df = pd.read_csv("hadoop_vs_spark_vs_np.csv")
+#df = pd.read_csv("hadoop_vs_mc.csv")
+# df = pd.read_csv("spark_vs_spark_comb.csv")
 
 # Verifica le colonne
 required_columns = {'input_size_mb', 'execution_time_sec', 'job_type', 'avg_ram_mb'}
@@ -18,7 +20,7 @@ color_cycle = ['#1f77b4', '#d62728', '#2ca02c']  # Solo rosso, blu e verde
 
 for i, job in enumerate(job_types):
     job_df = df[df['job_type'] == job].sort_values(by='input_size_mb')
-    color = color_cycle[i % 3]  # Alterna tra rosso, blu e verde
+    color = color_cycle[i % len(color_cycle)]  # Alterna tra i colori disponibili
 
     # Linea principale: execution time
     ax1.plot(job_df['input_size_mb'], job_df['execution_time_sec'],
@@ -35,7 +37,9 @@ ax1.set_ylabel('Execution time (seconds)')
 ax2.set_ylabel('Average RAM usage per seconds (MB/sec)')
 ax2.set_ylim(bottom=0)
 
-ax1.set_title('Hadoop Job execution time and RAM usage vs Input size')
+ax1.set_title('Time and RAM comparison Hadoop vs Spark vs Python non-parallel')
+#ax1.set_title('Time and RAM comparison Classic MapReduce vs in-Mapper Combiner')
+#ax1.set_title('Time and RAM comparison Spark vs Spark in-Mapper Combiner')
 
 # Unifica legende
 lines_1, labels_1 = ax1.get_legend_handles_labels()

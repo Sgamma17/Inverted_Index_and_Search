@@ -1,0 +1,15 @@
+input_size_mb,execution_time_sec,job_type,avg_ram_mb
+0.01,8.7,Spark,2123
+0.1,6.8,Spark,2191
+1,6.1,Spark,2126
+10,7.4,Spark,2198
+100,41,Spark,2411
+1000,511,Spark,2663
+2000,1062,Spark,2676
+0.01,5.8,Spark in-Mapper Combiner,1976
+0.1,6,Spark in-Mapper Combiner,2017
+1,6,Spark in-Mapper Combiner,2176
+10,10.7,Spark in-Mapper Combiner,2257
+100,24.2,Spark in-Mapper Combiner,2334
+1000,116,Spark in-Mapper Combiner,2581
+2000,223,Spark in-Mapper Combiner,2611

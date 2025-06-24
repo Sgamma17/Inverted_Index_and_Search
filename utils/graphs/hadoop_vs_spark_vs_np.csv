@@ -1,0 +1,22 @@
+input_size_mb,execution_time_sec,job_type,avg_ram_mb
+0.01,12,Hadoop,1043
+0.1,13,Hadoop,1654
+1,14,Hadoop,1428
+10,21,Hadoop,2106
+100,38,Hadoop,2729
+1000,133,Hadoop,3847
+2000,249,Hadoop,4240
+0.01,8.7,Spark,2123
+0.1,6.8,Spark,2191
+1,6.1,Spark,2126
+10,7.4,Spark,2198
+100,41,Spark,2411
+1000,511,Spark,2663
+2000,1062,Spark,2676
+0.01,0.01,Python non-parallel,0.92
+0.1,0.12,Python non-parallel,2.93
+1,0.59,Python non-parallel,11.03
+10,5.82,Python non-parallel,34.68
+100,32.77,Python non-parallel,105.47
+1000,309.71,Python non-parallel,378.62
+2000,520.72,Python non-parallel,630.72

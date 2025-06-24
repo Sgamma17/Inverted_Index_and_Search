@@ -1,0 +1,15 @@
+input_size_mb,execution_time_sec,job_type,avg_ram_mb
+0.01,12,Classic MapReduce,1043
+0.1,13,Classic MapReduce,1654
+1,14,Classic MapReduce,1428
+10,21,Classic MapReduce,2106
+100,38,Classic MapReduce,2729
+1000,133,Classic MapReduce,3847
+2000,249,Classic MapReduce,4240
+0.01,10,in-Mapper Combiner,1067
+0.1,12,in-Mapper Combiner,1226
+1,14,in-Mapper Combiner,1484
+10,18,in-Mapper Combiner,2014
+100,28,in-Mapper Combiner,2331
+1000,74,in-Mapper Combiner,3457
+2000,133,in-Mapper Combiner,3923
